@@ -25,4 +25,5 @@ public class ConsumerService {
     public void consumeB(Map<String, Object> message) {
         System.out.println("Consumer B nhận được: " + message);
     }
+
 }
