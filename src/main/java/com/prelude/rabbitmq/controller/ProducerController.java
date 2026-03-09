@@ -35,4 +35,36 @@ public class ProducerController {
         );
         return "Message Sent!";
     }
+
+    @PostMapping("/topic/all")
+    public String sendToAllTopic(@RequestBody Map<String, Object> message){
+
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.TOPIC_EXCHANGE,
+                "learning.topic.test", // hoặc "learning.topic.created", "learning.topic.updated"
+                message
+        );
+        return "Message Sent!";
+    }
+    @PostMapping("/topic/created")
+    public String sendToCreated(@RequestBody Map<String, Object> message){
+
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.TOPIC_EXCHANGE,
+                "learning.topic.created", // hoặc "learning.topic.created", "learning.topic.updated"
+                message
+        );
+        return "Message Sent!";
+    }
+
+    @PostMapping("/topic/updated")
+    public String sendToUpdated(@RequestBody Map<String, Object> message){
+
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.TOPIC_EXCHANGE,
+                "learning.topic.updated", // hoặc "learning.topic.created", "learning.topic.updated"
+                message
+        );
+        return "Message Sent!";
+    }
 }
