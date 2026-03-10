@@ -1,16 +1,14 @@
-package com.prelude.rabbitmq.configuration;
+package com.prelude.rabbitmq.configuration.RabbitMQ;
 
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitmqACKConfig {
+public class ACKConfig {
 
     @Bean("manualFactory")
     public SimpleRabbitListenerContainerFactory manualFactory(
