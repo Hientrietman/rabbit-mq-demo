@@ -1,13 +1,14 @@
-package com.prelude.rabbitmq.configuration;
+package com.prelude.rabbitmq.configuration.RabbitMQ;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitMQConfig {
+public class RBMQMainConfig {
 
     public static final String QUEUE_NAME = "learning.queue";
     public static final String EXCHANGE_NAME = "learning.exchange";
@@ -41,8 +42,13 @@ public class RabbitMQConfig {
     @Bean public Queue topicQueue2() { return new Queue(TOPIC_QUEUE_CREATED); }
     @Bean public Queue topicQueue3() { return new Queue(TOPIC_QUEUE_UPDATED); }
 
-    @Bean public Queue testManualACKQueue() {return new Queue(MANUAL_ACK_QUEUE);}
-
+    @Bean
+    public Queue testManualACKQueue() {
+        return QueueBuilder.durable(MANUAL_ACK_QUEUE)
+                .withArgument("x-dead-letter-exchange", "DLX.EXCHANGE") // Khớp với DLX_EXCHANGE bên class DLXConfig
+                .withArgument("x-dead-letter-routing-key", "DLX.ROUTING.KEY") // Khớp với DLX_ROUTING_KEY
+                .build();
+    }
     // 2. Khai báo Exchange (Direct)
     @Bean
     public DirectExchange directExchange() {
@@ -59,7 +65,7 @@ public class RabbitMQConfig {
     }
     // 3. Binding (Nối Queue vào Exchange thông qua Routing Key)
     @Bean
-    public Binding binding(Queue queue, DirectExchange exchange) {
+    public Binding binding(Queue queue, @Qualifier("directExchange") DirectExchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with(ROUTING_KEY);
     }
 
