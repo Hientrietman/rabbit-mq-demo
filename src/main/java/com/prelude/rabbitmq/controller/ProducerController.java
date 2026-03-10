@@ -67,4 +67,15 @@ public class ProducerController {
         );
         return "Message Sent!";
     }
+
+    @PostMapping("/manual")
+    public String sendToManualQueue(@RequestBody Map<String, Object> message){
+
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.EXCHANGE_NAME,
+                RabbitMQConfig.MANUAL_ACK_ROUTING_KEY,
+                message
+        );
+        return "Message Sent!";
+    }
 }
