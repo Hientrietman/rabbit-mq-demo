@@ -22,6 +22,9 @@ public class RabbitMQConfig {
     public static final String TOPIC_QUEUE_UPDATED = "learning.topic.updated";
     public static final String TOPIC_EXCHANGE = "learning.topicExchange";
 
+    public static final String MANUAL_ACK_QUEUE = "learning.manual_ack";
+    public static final String MANUAL_ACK_ROUTING_KEY = "learning.manual_ack.routingKey";
+
     // 1. Khai báo Queue
     //Direct
     @Bean
@@ -38,6 +41,8 @@ public class RabbitMQConfig {
     @Bean public Queue topicQueue2() { return new Queue(TOPIC_QUEUE_CREATED); }
     @Bean public Queue topicQueue3() { return new Queue(TOPIC_QUEUE_UPDATED); }
 
+    @Bean public Queue testManualACKQueue() {return new Queue(MANUAL_ACK_QUEUE);}
+
     // 2. Khai báo Exchange (Direct)
     @Bean
     public DirectExchange directExchange() {
@@ -48,11 +53,10 @@ public class RabbitMQConfig {
     public FanoutExchange fanoutExchange() {
         return new FanoutExchange(FANOUT_EXCHANGE);
     }
-
+    // Khai báo Topic Exchange
     @Bean public TopicExchange topicExchange() {
         return new TopicExchange(TOPIC_EXCHANGE);
     }
-
     // 3. Binding (Nối Queue vào Exchange thông qua Routing Key)
     @Bean
     public Binding binding(Queue queue, DirectExchange exchange) {
@@ -72,21 +76,24 @@ public class RabbitMQConfig {
     // Binding queue để nhận tất cả message (wildcard *)
     @Bean
     public Binding topicBindingAll(Queue topicQueue, TopicExchange topicExchange) {
-        return BindingBuilder.bind(topicQueue).to(topicExchange).with("learning.topic.#");
+        return BindingBuilder.bind(topicQueue).to(topicExchange).with(TOPIC_QUEUE_ALL);
     }
 
     // Binding queue nhận created messages
     @Bean
     public Binding topicBindingCreated(Queue topicQueue2, TopicExchange topicExchange) {
-        return BindingBuilder.bind(topicQueue2).to(topicExchange).with("learning.topic.created");
+        return BindingBuilder.bind(topicQueue2).to(topicExchange).with(TOPIC_QUEUE_CREATED);
     }
 
     // Binding queue nhận updated messages
     @Bean
     public Binding topicBindingUpdated(Queue topicQueue3, TopicExchange topicExchange) {
-        return BindingBuilder.bind(topicQueue3).to(topicExchange).with("learning.topic.updated");
+        return BindingBuilder.bind(topicQueue3).to(topicExchange).with(TOPIC_QUEUE_UPDATED);
     }
-
+    @Bean
+    public Binding manualAck(Queue testManualACKQueue, DirectExchange directExchange) {
+        return BindingBuilder.bind(testManualACKQueue).to(directExchange).with(MANUAL_ACK_ROUTING_KEY);
+    }
     // 4. Converter để gửi/nhận dưới dạng JSON (Best Practice)
     @Bean
     public MessageConverter jsonMessageConverter() {
